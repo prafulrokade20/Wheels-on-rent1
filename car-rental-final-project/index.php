@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<?php 
+session_start(); 
+require 'connection.php';
+$conn = Connect();
+?>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHEELS ON RENT Car Rental</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/user.css">
+    <link rel="stylesheet" href="assets/w3css/w3.css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation" style="color: black">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                    </button>
+                <a class="navbar-brand page-scroll" href="index.php">
+                   WHEELS ON RENT CAR RENTAL </a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+
+            <?php
+                if(isset($_SESSION['login_client'])){
+            ?> 
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="index.php">Home</a>
+                    </li>
+                    <li>
+                        <a href="#"><span class="glyphicon glyphicon-user"></span> Welcome <?php echo $_SESSION['login_client']; ?></a>
+                    </li>
+                    <li>
+                    <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> Control Panel <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+              <li> <a href="entercar.php">Add Car</a></li>
+              <li> <a href="enterdriver.php"> Add Driver</a></li>
+              <li> <a href="clientview.php">View</a></li>
+              <li> <a href="dashboard.php">Dashboard</a></li>
+
+            </ul>
+            </li>
+          </ul>
+                    </li>
+                    <li>
+                        <a href="logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <?php
+                }
+                else if (isset($_SESSION['login_customer'])){
+            ?>
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="index.php">Home</a>
+                    </li>
+                    <li>
+                        <a href="#"><span class="glyphicon glyphicon-user"></span> Welcome <?php echo $_SESSION['login_customer']; ?></a>
+                    </li>
+                    <ul class="nav navbar-nav">
+            <li><a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Garagge <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+              <li> <a href="prereturncar.php">Return Now</a></li>
+              <li> <a href="mybookings.php"> My Bookings</a></li>
+            </ul>
+            </li>
+          </ul>
+                    <li>
+                        <a href="logout.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <?php
+            }
+                else {
+            ?>
+
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="index.php">Home</a>
+                    </li>
+                    <li>
+                        <a href="clientlogin.php">Admin</a>
+                    </li>
+                    <li>
+                        <a href="customerlogin.php">Customer</a>
+                    </li>
+                    <li>
+                        <a href="reviews.php"> Our Reviews </a>
+                    </li>
+                    <li>
+                        <a href="faq/index.php"> FAQ </a>
+                    </li>
+                </ul>
+            </div>
+                <?php   }
+                ?>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <div class="bgimg-1">
+        <header class="intro">
+            <div class="intro-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="brand-heading" style="color: white">WHEELS ON RENT CAR RENTAL</h1>
+                            <p class="intro-text">
+                                Online car rental service
+                            </p>
+                            <a href="#sec2" class="btn btn-circle page-scroll blink">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <div id="sec2" style="color: #777;background-color:white;text-align:center;padding:50px 80px;text-align: justify;">
+        <h3 style="text-align:center;">Currently Available Cars</h3>
+<br>
+        <section class="menu-content">
+            <?php   
+            $sql1 = "SELECT * FROM cars WHERE car_availability='yes'";
+            $result1 = mysqli_query($conn,$sql1);
+
+            if(mysqli_num_rows($result1) > 0) {
+                while($row1 = mysqli_fetch_assoc($result1)){
+                    $car_id = $row1["car_id"];
+                    $car_name = $row1["car_name"];
+                    $ac_price = $row1["ac_price"];
+                    $ac_price_per_day = $row1["ac_price_per_day"];
+                    $non_ac_price = $row1["non_ac_price"];
+                    $non_ac_price_per_day = $row1["non_ac_price_per_day"];
+                    $car_img = $row1["car_img"];
+               
+                    ?>
+            <a href="booking.php?id=<?php echo($car_id) ?>">
+            <div class="sub-menu">
+            
+
+            <img class="card-img-top" src="<?php echo $car_img; ?>" alt="Card image cap">
+            <h5> <?php echo $car_name; ?> </h5>
+            <h6> AC Fare: <?php echo ("₹" . $ac_price . "/km & ₹" . $ac_price_per_day . "/day"); ?></h6>
+            <h6> Non-AC Fare: <?php echo ("₹" . $non_ac_price . "/km & ₹" . $non_ac_price_per_day . "/day"); ?></h6>
+
+            
+            </div> 
+            </a>
+            <?php }}
+            else {
+                ?>
+<h1> No cars available :( </h1>
+                <?php
+            }
+            ?>                                   
+        </section>
+                    
+    </div>
+
+    <div class="bgimg-2">
+        <div class="caption">
+            <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;"></span>
+        </div>
+    </div>
+
+    <div style="position:relative;">
+        <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+            <p>Click here for the latest deals on your bookings</p>
+        </div>
+    </div>
+
+    <!-- section of team -->
+    <!-- Team Section -->
+<div id="team" style="text-align: center; padding: 20px;">
+    <h3>OUR TEAM</h3>
+    <p><em>Meet the people behind Wheels on Rent!</em></p>
+
+    <!-- Container for team members -->
+    <div style="display: inline-block; width: 100%; text-align: center;">
+
+        <!-- Team Member 1 -->
+        <div style="width: 30%; display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+            <img src="assets/img/newteam-1.jpeg" alt="praful rokade" width="100" height="100" style="border-radius: 50%;">
+            <h4>praful rokade</h4>
+            <p>CEO & Founder</p>
+            <p>praful is the visionary behind Wheels on Rent, ensuring a smooth ride for everyone.And mind behind the revoluation of indian automobile market</p>
+            <p>Follow: <a href="#">Twitter</a> | <a href="#">Facebook</a> | <a href="#">LinkedIn</a></p>
+        </div>
+
+        <!-- Team Member 2 -->
+        <div style="width: 30%; display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+            <img src="assets/img/newteam-2.jpeg" alt="dipak deshmane" width="100" height="100" style="border-radius: 50%;">
+            <h4>dipak deshmane</h4>
+            <p>Chief Operating Officer | co-founder</p>
+            <p>dipak manages the operations, ensuring that cars are always available and running smoothly.</p>
+            <p>Follow: <a href="#">Twitter</a> | <a href="#">Facebook</a> | <a href="#">LinkedIn</a></p>
+        </div>
+
+        <!-- Team Member 3 -->
+        <div style="width: 30%; display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+            <img src="assets/img/team-3.jpg" alt="vishal shinde" width="100" height="100" style="border-radius: 50%;">
+            <h4>vishal shinde</h4>
+            <p>Lead Developer</p>
+            <p>vishal is responsible for the technical backbone of Wheels on Rent's website and systems.</p>
+            <p>Follow: <a href="#">Twitter</a> | <a href="#">Facebook</a> | <a href="#">LinkedIn</a></p>
+        </div>
+          <!-- Team Member 4 -->
+          <div style="width: 30%; display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+            <img src="assets/img/team-2.jpg" alt="dipak deshmane" width="100" height="100" style="border-radius: 50%;">
+            <h4>Harsh Sutar</h4>
+            <p>Chief of Driver Mangement | Head of Car department </p>
+            <p>Harsh manages the operations, ensuring that cars are always available and The drivers and manage the driver's and car for smooth running.</p>
+            <p>Follow: <a href="#">Twitter</a> | <a href="#">Facebook</a> | <a href="#">LinkedIn</a></p>
+        </div>
+          <!-- Team Member 5 -->
+          <div style="width: 30%; display: inline-block; margin: 10px; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+            <img src="assets/img/team-1.jpg" alt="dipak deshmane" width="100" height="100" style="border-radius: 50%;">
+            <h4>Rameshwar Karnale</h4>
+            <p>Chief of Account department | Head of Finanace </p>
+            <p>Rameshwar manages the Account, ensuring that payement  are always collected properly and The  manage the company funds.</p>
+            <p>Follow: <a href="#">Twitter</a> | <a href="#">Facebook</a> | <a href="#">LinkedIn</a></p>
+        </div>
+
+    </div>
+</div>
+<!-- End Team Section -->
+
+
+ <!-- Review Section -->
+ <form action="submit_review.php" method="POST">
+    <div class="form-group">
+        <label for="customer_name">Your Name</label>
+        <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+    </div>
+    <div class="form-group">
+        <label for="star_rating">Rating</label>
+        <select class="form-control" id="star_rating" name="star_rating" required>
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="review_note">Your Review</label>
+        <textarea class="form-control" id="review_note" name="review_note" rows="3" required></textarea>
+    </div>
+    <button type="submit" name="submit" class="btn btn-primary">Submit Review</button>
+</form>
+
+
+
+<!-- review session end -->
+
+    <!-- Container (Contact Section) -->
+    <div class="w3-content w3-container w3-padding-64" id="contact">
+        <h3 class="w3-center">WHERE WE WORK</h3>
+        <p class="w3-center"><em>We love your feedback!</em></p>
+
+        <div class="w3-row w3-padding-32 w3-section">
+            <div class="w3-col m4 w3-container">
+                <!-- Add Google Maps -->
+                <div id="googleMap" class="w3-round-large w3-greyscale" style="width:100%;height:400px;"></div>
+            </div>
+            <div class="w3-col m8 w3-panel">
+                <div class="w3-large w3-margin-bottom">
+                    <i class="fa fa-map-marker fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> PUNE, India<br>
+                    <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Phone: +91 123456789<br>
+                    <i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: xyz@gmail.com<br>
+                </div>
+                <p>New to pune ? Drop Your Details and Leave it on us We'll Revert</p>
+                <form action="action_page.php" method="POST">
+                    <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+                        <div class="w3-half">
+                            <input class="w3-input w3-border" type="text" placeholder="Name" required name="name">
+                        </div>
+                        <div class="w3-half">
+                            <input class="w3-input w3-border" type="text" placeholder="Email" required name="e_mail">
+                        </div>
+                    </div>
+                    <input class="w3-input w3-border" type="text" placeholder="Message" required name="message">
+                    <button class="w3-button w3-black w3-right w3-section" type="submit">
+                <i class="fa fa-paper-plane"></i> SEND MESSAGE
+              </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+       
+    <footer class="site-footer">
+        <div class="container">
+            <hr>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5> WHEELS ON RENT Car Rental</h5>
+                </div>
+                <div class="col-sm-6 social-icons">
+                    <a href="#" target="_blank"><i class="fa fa-facebook"></i></a>
+                    <a href="#" target="_blank"><i class="fa fa-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fa fa-instagram"></i></a>
+                    <a href="#" target="_blank"><i class="fa fa-google-plus"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function myMap() {
+            myCenter = new google.maps.LatLng(25.614744, 85.128489);
+            var mapOptions = {
+                center: myCenter,
+                zoom: 12,
+                scrollwheel: true,
+                draggable: true,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapOptions);
+
+            var marker = new google.maps.Marker({
+                position: myCenter,
+            });
+            marker.setMap(map);
+        }
+    </script>
+    <script>
+        function sendGaEvent(category, action, label) {
+            ga('send', {
+                hitType: 'event',
+                eventCategory: category,
+                eventAction: action,
+                eventLabel: label
+            });
+        };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCuoe93lQkgRaC7FB8fMOr_g1dmMRwKng&callback=myMap" type="text/javascript"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>    
+    <!-- Plugin JavaScript -->
+    <script src="assets/js/jquery.easing.min.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="assets/js/theme.js"></script>
+     
+ 
+</body>
+
+</html>

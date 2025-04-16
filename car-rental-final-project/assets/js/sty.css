@@ -1,0 +1,44 @@
+.body {
+    padding: 35px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: aliceblue;
+    align-items: center;
+    display: flex;
+    height: 100px;
+}
+
+.login-container {
+    padding: 25px;
+    background-color: white;
+    box-shadow: 15px;
+    border-radius: 10px;
+
+}
+.label {
+    padding: 10px;
+    display: block;
+}
+
+.h2 {
+    margin-bottom: 10px;
+}
+.input {
+    background-color: white;
+    width: 100px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+.form-group{
+    margin: 20px;
+}
+.button {
+    color: aqua;
+    cursor: pointer;
+    width: 100px;
+    background-color: aqua;
+    padding: 10px;
+    border: none;
+}
+.button:hover {
+    background-color: rebeccapurple;
+}
